@@ -24,7 +24,11 @@ public struct DurationFilter {
         /// Matches labels that end with the specified suffix.
         /// - Parameter suffix: The string to match as the label's ending value.
         case suffix(String)
-        
+
+        /// Matches labels that have an exact value.
+        /// - Parameter exact: The string to match as the label's exact value.
+        case exact(String)
+
         /// Matches labels using the given regular expression.
         /// - Parameter regex: The `NSRegularExpression` to evaluate against the label.
         case regex(NSRegularExpression)
@@ -91,6 +95,8 @@ public struct DurationFilter {
             return label.hasPrefix(prefix)
         case let .suffix(suffix):
             return label.hasSuffix(suffix)
+        case let .exact(value):
+            return label == value
         case let .regex(regex):
             return regex.numberOfMatches(in: label, range: NSRange(location: 0, length: label.utf16.count)) > 0
         }

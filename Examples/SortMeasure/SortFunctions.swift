@@ -7,7 +7,7 @@
 // See the LICENSE.txt file in the project root for full license information.
 //
 
-func selectionSortVariantOne(_ a: inout [Double]) {
+@Sendable func selectionSortVariantOne(_ a: inout [Double]) {
     var i = 0
     while i < a.count {
         var min = i
@@ -21,7 +21,7 @@ func selectionSortVariantOne(_ a: inout [Double]) {
     }
 }
 
-func selectionSortVariantTwo(_ a: inout [Double]) {
+@Sendable func selectionSortVariantTwo(_ a: inout [Double]) {
     var i = 0
     let n = a.count
     while i < n {
@@ -36,7 +36,7 @@ func selectionSortVariantTwo(_ a: inout [Double]) {
     }
 }
 
-func systemSort(_ a: inout [Double]) {
+@Sendable func systemSort(_ a: inout [Double]) {
     a.sort()
 }
 

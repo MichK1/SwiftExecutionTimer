@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 5.8
 
 import PackageDescription
 
@@ -16,12 +16,16 @@ let package = Package(
             name: "SwiftExecutionTimerTests",
             dependencies: ["SwiftExecutionTimer"]
         ),
-        //Example
+        //Examples
         .executableTarget(
             name: "SortMeasure",
             dependencies: ["SwiftExecutionTimer"],
             path: "Examples/SortMeasure"
         ),
-
+        .executableTarget(
+            name: "SimpleMeasure",
+            dependencies: ["SwiftExecutionTimer"],
+            path: "Examples/SimpleMeasure"
+        ),
     ]
 )

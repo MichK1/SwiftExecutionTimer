@@ -62,5 +62,17 @@ struct DurationFilterTests {
         let sut = DurationFilter.startLabel(.regex(regex))
         #expect(!sut.matches(duration))
     }
-    
+
+    @Test func checkDurationMatchingExact() {
+        let duration = Duration(duration: 2, startLabel: "Foo Bar", endLabel: "BarAbc")
+        let sut = DurationFilter.startLabel(.exact("Foo Bar"))
+        #expect(sut.matches(duration))
+    }
+
+    @Test func checkDurationNotMatchingExact() {
+        let duration = Duration(duration: 2, startLabel: "Foo Bar", endLabel: "BarAbc")
+        let sut = DurationFilter.startLabel(.exact("Foo Ba"))
+        #expect(!sut.matches(duration))
+    }
+
 }
