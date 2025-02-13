@@ -19,9 +19,9 @@ import Foundation
 /// }
 /// print(timer.durations)
 /// ```
-public class ExecutionTimer {
+final public class ExecutionTimer: Sendable {
     /// `TimeSource` defines which source of time to use
-    public enum TimeSource {
+    public enum TimeSource : Sendable {
         /// Measure time using a monotonic clock (e.g., system uptime since boot)
         case monotonic
         /// Measure time using user-level processor time (CPU usage)
@@ -29,18 +29,37 @@ public class ExecutionTimer {
     }
 
     /// `TimePoint`s added at specific execution points of the application.
-    public private(set) var relativeTimePoints: [TimePoint] = []
+    public var relativeTimePoints: [TimePoint] {
+        defer {
+            lock.unlock()
+        }
+        lock.lock()
+        return container.relativeTimePoints
+    }
     /// The initial `TimePoint` added to the measurement.
-    public private(set) var initialTimePoint: Double = Double.nan
+    public var initialTimePoint: Double {
+        defer {
+            lock.unlock()
+        }
+        lock.lock()
+        return container.initialTimePoint
+    }
     
     /// Durations of the periods between time points.
     public var durations: [Duration] {
-        zip(relativeTimePoints, relativeTimePoints.dropFirst()).map { Duration(start: $0, end: $1) }
+        defer {
+            lock.unlock()
+        }
+        lock.lock()
+        return container.durations
     }
 
     /// The chosen `TimeSource`.
     public let timeSource: TimeSource
+    
+    private let container = TimePointsContainer()
     private let timePointSource: TimePointSource
+    private let lock = NSLock()
     
     /// Initializes an `ExecutionTimer` instance with the given measurement method.
     ///
@@ -65,11 +84,12 @@ public class ExecutionTimer {
     /// - Parameters:
     ///   - label: Additional information describing the time point.
     public func mark(_ label: String = "") {
-        let timePoint = timePointSource.timePointNow
-        if initialTimePoint.isNaN {
-            initialTimePoint = timePoint
+        defer {
+            lock.unlock()
         }
-        relativeTimePoints.append(TimePoint(timePoint: timePoint - initialTimePoint, label: label))
+        lock.lock()
+        let timePoint = timePointSource.timePointNow
+        container.mark(timePoint: timePoint, label: label)
     }
 
     /// Measures the time taken for a specified action.
@@ -122,6 +142,25 @@ public class ExecutionTimer {
     /// - Returns: An array of `Duration` values that satisfy the filter criteria.
     public func durations(filter: DurationFilter) -> [Duration] {
         return durations.filter { filter.matches($0) }
+    }
+
+}
+
+
+fileprivate final class TimePointsContainer: @unchecked Sendable {
+    private(set) var relativeTimePoints: [TimePoint] = []
+    private(set) var initialTimePoint: Double = Double.nan
+    
+    var durations: [Duration] {
+        zip(relativeTimePoints, relativeTimePoints.dropFirst()).map { Duration(start: $0, end: $1) }
+    }
+
+
+    func mark(timePoint: Double, label: String) {
+        if initialTimePoint.isNaN {
+            initialTimePoint = timePoint
+        }
+        relativeTimePoints.append(TimePoint(timePoint: timePoint - initialTimePoint, label: label))
     }
 
 }

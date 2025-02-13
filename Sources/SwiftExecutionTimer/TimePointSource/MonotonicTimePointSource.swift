@@ -9,7 +9,7 @@
 
 import Foundation
 
-class MonotonicTimePointSource: TimePointSource {
+final class MonotonicTimePointSource: TimePointSource {
     var timePointNow: Double {
 #if os(Linux)
         var ts = timespec()

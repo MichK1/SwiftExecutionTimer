@@ -9,7 +9,7 @@
 
 import Foundation
 
-class CPUUtilizationTimePointSource: TimePointSource  {
+final class CPUUtilizationTimePointSource: TimePointSource  {
     var timePointNow: Double {
         var usage = rusage()
 #if os(Linux)
