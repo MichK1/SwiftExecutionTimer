@@ -10,12 +10,16 @@
 import Foundation
 
 protocol ExecutionTimerDependencies {
-    var monotonicTimePointSource: TimePointSource { get }
-    var cpuUtilizationTimePointSource: TimePointSource { get }
+    func timePointSource(_ source: ExecutionTimer.TimeSource) -> TimePointSource
 }
 
 class ExecutionTimerDependenciesImpl: ExecutionTimerDependencies {
-    var monotonicTimePointSource: TimePointSource { MonotonicTimePointSource() }
-    
-    var cpuUtilizationTimePointSource: TimePointSource { CPUUtilizationTimePointSource() }
+    func timePointSource(_ timeSource: ExecutionTimer.TimeSource) -> TimePointSource {
+        switch timeSource {
+        case .monotonic:
+            MonotonicTimePointSource()
+        case .cpuUtilizationTime:
+            CPUUtilizationTimePointSource()
+        }
+    }
 }

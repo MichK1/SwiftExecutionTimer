@@ -30,26 +30,20 @@ final public class ExecutionTimer: Sendable {
 
     /// `TimePoint`s added at specific execution points of the application.
     public var relativeTimePoints: [TimePoint] {
-        defer {
-            lock.unlock()
-        }
+        defer { lock.unlock() }
         lock.lock()
         return container.relativeTimePoints
     }
     /// The initial `TimePoint` added to the measurement.
     public var initialTimePoint: Double {
-        defer {
-            lock.unlock()
-        }
+        defer { lock.unlock() }
         lock.lock()
         return container.initialTimePoint
     }
     
     /// Durations of the periods between time points.
     public var durations: [Duration] {
-        defer {
-            lock.unlock()
-        }
+        defer { lock.unlock() }
         lock.lock()
         return container.durations
     }
@@ -71,12 +65,7 @@ final public class ExecutionTimer: Sendable {
 
     init(dependencies: ExecutionTimerDependencies, timeSource: TimeSource = .monotonic) {
         self.timeSource = timeSource
-        switch timeSource {
-        case .monotonic:
-            self.timePointSource = dependencies.monotonicTimePointSource
-        case .cpuUtilizationTime:
-            self.timePointSource = dependencies.cpuUtilizationTimePointSource
-        }
+        self.timePointSource = dependencies.timePointSource(timeSource)
     }
 
     /// Adds a mark at the current time point, described by a label.
@@ -119,9 +108,7 @@ final public class ExecutionTimer: Sendable {
     ///
     /// - Throws: Rethrows any errors thrown by the action.
     public func measure(_ startLabel: String = "", _ endLabel: String = "", _ action: VoidThrowingClosure) throws {
-        defer {
-            mark(endLabel)
-        }
+        defer { mark(endLabel) }
         mark(startLabel)
         try action()
     }
