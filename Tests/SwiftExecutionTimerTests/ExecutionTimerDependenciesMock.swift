@@ -11,19 +11,32 @@ import Testing
 @testable import SwiftExecutionTimer
 
 class ExecutionTimerDependenciesMock: ExecutionTimerDependencies {
-    var monotonicTimePointSourceStub = TimePointReaderStub()
-    var cpuUtilizationTimePointSourceStub = TimePointReaderStub()
-
-    var monotonicTimePointSource: TimePointSource {
-        monotonicTimePointSourceStub
-    }
     
-    var cpuUtilizationTimePointSource: TimePointSource {
-        cpuUtilizationTimePointSourceStub
+    var timePointSourceStub = TimePointReaderStub()
+
+    func timePointSource(_ source: SwiftExecutionTimer.ExecutionTimer.TimeSource) -> any SwiftExecutionTimer.TimePointSource {
+        timePointSourceStub.source = source
+        return timePointSourceStub
     }
 
 }
 
-class TimePointReaderStub: TimePointSource {
-    var timePointNow: Double = -1
+class TimePointReaderStub: TimePointSource, @unchecked Sendable {
+    var timePointNow: Double {
+        set {
+            timePoints = [newValue]
+            timePointsCurrentIndex = 0
+        }
+        get {
+            guard timePointsCurrentIndex < timePoints.count else { return -1 }
+            let index = timePointsCurrentIndex
+            timePointsCurrentIndex += 1
+            return timePoints[index]
+        }
+    }
+    
+    var source = SwiftExecutionTimer.ExecutionTimer.TimeSource.monotonic
+    
+    var timePoints: [Double] = []
+    var timePointsCurrentIndex = 0
 }

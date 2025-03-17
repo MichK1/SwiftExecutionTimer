@@ -28,7 +28,7 @@ struct ExecutionTimerTests {
     
     @Test func checkAddingOneTimePoint() {
         let executionTimer = executionTimer(.monotonic)
-        dependenciesMock.monotonicTimePointSourceStub.timePointNow =  3
+        dependenciesMock.timePointSourceStub.timePointNow =  3
         let expected = [TimePoint(timePoint: 0, label: "")]
         executionTimer.mark()
         #expect(executionTimer.initialTimePoint == 3)
@@ -40,9 +40,8 @@ struct ExecutionTimerTests {
         let expectedTimePoints = [TimePoint(timePoint: 0, label: ""), TimePoint(timePoint: 3, label: "")]
         let expectedDurations = [Duration(duration: 3, startLabel: "", endLabel: "")]
         let executionTimer = executionTimer(.monotonic)
-        dependenciesMock.monotonicTimePointSourceStub.timePointNow =  3
+        dependenciesMock.timePointSourceStub.timePoints =  [3, 6]
         executionTimer.mark()
-        dependenciesMock.monotonicTimePointSourceStub.timePointNow =  6
         executionTimer.mark()
         
         #expect(executionTimer.initialTimePoint == 3)
@@ -61,39 +60,31 @@ struct ExecutionTimerTests {
             Duration(duration: 4, startLabel: "Second", endLabel: "")
         ]
         let executionTimer = executionTimer(.monotonic)
-        dependenciesMock.monotonicTimePointSourceStub.timePointNow =  3
+        dependenciesMock.timePointSourceStub.timePoints =  [3, 6, 10]
         executionTimer.mark("First")
-        dependenciesMock.monotonicTimePointSourceStub.timePointNow =  6
         executionTimer.mark("Second")
-        dependenciesMock.monotonicTimePointSourceStub.timePointNow =  10
         executionTimer.mark()
         #expect(executionTimer.initialTimePoint == 3)
         #expect(executionTimer.relativeTimePoints == expectedTimePoints)
         #expect(executionTimer.durations == expectedDurations)
     }
 
-    @Test func checkDurationsSum1() {
+    @Test func checkDurationsSumForEndLabelHavingSuffix() {
         let executionTimer = executionTimer(.monotonic)
-        dependenciesMock.monotonicTimePointSourceStub.timePointNow =  3
+        dependenciesMock.timePointSourceStub.timePoints =  [3, 6, 10, 13]
         executionTimer.mark("First")
-        dependenciesMock.monotonicTimePointSourceStub.timePointNow =  6
         executionTimer.mark("Second")
-        dependenciesMock.monotonicTimePointSourceStub.timePointNow =  10
         executionTimer.mark()
-        dependenciesMock.monotonicTimePointSourceStub.timePointNow =  13
         executionTimer.mark("Second")
         #expect(executionTimer.sumDurations(filter: .endLabel(.suffix("cond"))) == 6)
     }
 
-    @Test func checkDurationsSumZero() {
+    @Test func checkDurationsSumIsZeroForEndLabelSuffixNotPresent() {
         let executionTimer = executionTimer(.monotonic)
-        dependenciesMock.monotonicTimePointSourceStub.timePointNow =  3
+        dependenciesMock.timePointSourceStub.timePoints =  [3, 6, 10, 13]
         executionTimer.mark("First")
-        dependenciesMock.monotonicTimePointSourceStub.timePointNow =  6
         executionTimer.mark("Second")
-        dependenciesMock.monotonicTimePointSourceStub.timePointNow =  10
         executionTimer.mark()
-        dependenciesMock.monotonicTimePointSourceStub.timePointNow =  13
         executionTimer.mark("Second")
         #expect(executionTimer.sumDurations(filter: .endLabel(.suffix("foo"))) == 0)
     }

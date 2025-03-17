@@ -142,7 +142,6 @@ fileprivate final class TimePointsContainer: @unchecked Sendable {
         zip(relativeTimePoints, relativeTimePoints.dropFirst()).map { Duration(start: $0, end: $1) }
     }
 
-
     func mark(timePoint: Double, label: String) {
         if initialTimePoint.isNaN {
             initialTimePoint = timePoint
