@@ -1,6 +1,6 @@
 # SwiftExecutionTimer
 
-The SwiftExecutionTimer package allows you to measure the execution times of specific code segments. 
+A lightweight Swift library that allows you to measure code execution time using labeled intervals. 
 
 ## Installation
 
@@ -8,14 +8,14 @@ SwiftExecutionTimer can be installed using Swift Package Manager:
 
 ```
 dependencies: [
-        .package(url: "https://github.com/MichK1/SwiftExecutionTimer.git", exact: "0.1.0"),
+        .package(url: "https://github.com/MichK1/SwiftExecutionTimer.git", from: "0.2.0"),
     ]
 ```
 
 ## Usage
 
 The ExecutionTimer class helps measure execution times by adding marks at various points during code execution.
-Each mark can optionally include a label for clarity. To add a mark, call the ExecutionTimer.mark() method.
+Each mark can optionally include a label for clarity. You can add a mark by calling the method ExecutionTimer.mark(), optionally providing a label.
 
 ### Features:
 
@@ -28,7 +28,7 @@ Each mark can optionally include a label for clarity. To add a mark, call the Ex
 
 `ExecutionTimer` supports two time sources:
  - `.monotonic`: Based on system uptime in seconds.
- - `.cpuUtilizationTime`: Based on CPU time spent executing the current process (user mode only). More details can be found [here][getrusage].
+ - `.cpuUtilizationTime`: Based on CPU time spent executing the current process (user mode only). More details are available [here][getrusage].
     
 ### Example: Measuring Sorting Time
 
@@ -64,11 +64,20 @@ func runAndMeasure() {
 
 ## Further examples
 
-Additional example, sorting execution time comparisons, can be found in the SortMeasure example.
+You can find more examples in the *Examples* folder. You can see them in action by running swift products:
+ - SimpleDownload
+ - SimpleMeasure
+ - SortMeasure
+
+```zsh
+% swift run SimpleDownload
+% swift run SimpleMeasure
+% swift run SortMeasure
+```
 
 ## License
 
-SwiftExecutionTimer is available under the MIT license. See the [LICENSE][License] file for more informations.
+SwiftExecutionTimer is available under the MIT license. See the [LICENSE][License] file for more information.
 
 [License]: https://github.com/MichK1/SwiftExecutionTimer/blob/main/LICENSE.txt
 [getrusage]: https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/getrusage.2.html

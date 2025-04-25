@@ -27,5 +27,10 @@ let package = Package(
             dependencies: ["SwiftExecutionTimer"],
             path: "Examples/SimpleMeasure"
         ),
+        .executableTarget(
+            name: "SimpleDownload",
+            dependencies: ["SwiftExecutionTimer"],
+            path: "Examples/SimpleDownload"
+        )
     ]
 )
